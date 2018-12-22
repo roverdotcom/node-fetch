@@ -1,5 +1,5 @@
 {
-  "name": "@titelmedia/node-fetch",
+  "name": "@dollarshaveclub/node-fetch",
   "version": "3.0.1",
   "private": false,
   "description": "A light-weight module that brings the Fetch API to node.js; Forked from https://npm.im/node-fetch",
