@@ -1,6 +1,6 @@
 {
   "name": "@dollarshaveclub/node-fetch",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "description": "A light-weight module that brings the Fetch API to node.js; Forked from https://npm.im/node-fetch",
   "main": "lib/index",
