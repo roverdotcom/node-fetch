@@ -7,7 +7,7 @@ import resumer from "resumer";
 import FormData from "form-data";
 import stringToArrayBuffer from "string-to-arraybuffer";
 import URLSearchParams_Polyfill from "url-search-params";
-import { ReadableStream } from "web-streams-polyfill";
+import { ReadableStream } from "@mattiasbuelens/web-streams-polyfill/ponyfill/es6";
 import { URL } from "whatwg-url";
 
 const { spawn } = require("child_process");
