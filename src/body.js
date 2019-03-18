@@ -10,6 +10,8 @@ import { ReadableStream, TransformStream} from "@mattiasbuelens/web-streams-poly
 import Blob, { BUFFER } from './blob.js';
 import FetchError from './fetch-error.js';
 import Stream, { PassThrough } from "stream";
+import Busboy from "busboy";
+import FormData from "formdata-node";
 
 let convert;
 try { convert = require('encoding').convert; } catch(e) {}
@@ -281,6 +283,30 @@ Body.prototype = {
 		return consumeBody.call(this).then(buffer => convertBody(buffer, this.headers));
 	},
 
+	formData() {
+		return new Promise((resolve, reject) => {
+			var formdata = new FormData();
+			var busboy = new Busboy({headers: {
+				'content-type': this.headers.get('content-type'),
+			}});
+			busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+				formdata.append(fieldname, val);
+			});
+			busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+				let val = "";
+				file.on('data', function(data) {
+					val += data;
+				});
+				file.on('end', function() {
+					formdata.append(fieldname, val, filename);
+				});
+			});
+			busboy.on('finish', function() {
+				resolve(formdata);
+			});
+			writeToStream(busboy, this);
+		});
+	},
 
 };
 
