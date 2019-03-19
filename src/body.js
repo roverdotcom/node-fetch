@@ -284,27 +284,21 @@ Body.prototype = {
 	},
 
 	formData() {
-		return new Promise((resolve, reject) => {
-			var formdata = new FormData();
-			var busboy = new Busboy({headers: {
-				'content-type': this.headers.get('content-type'),
-			}});
-			busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-				formdata.append(fieldname, val);
-			});
-			busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-				let val = "";
-				file.on('data', function(data) {
-					val += data;
+		return consumeBody.call(this).then(buffer => {
+			return new Promise((resolve, reject) => {
+				var formdata = new FormData();
+				var busboy = new Busboy({headers: {
+					'content-type': this.headers.get('content-type'),
+				}});
+				busboy.on('field', (fieldname, val) => formdata.append(fieldname, val));
+				busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+					let val = "";
+					file.on('data', (data) => val += data);
+					file.on('end', () => formdata.append(fieldname, val, filename));
 				});
-				file.on('end', function() {
-					formdata.append(fieldname, val, filename);
-				});
+				busboy.on('finish', () => resolve(formdata));
+				writeToStream(busboy, this);
 			});
-			busboy.on('finish', function() {
-				resolve(formdata);
-			});
-			writeToStream(busboy, this);
 		});
 	},
 
