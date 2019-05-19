@@ -2141,7 +2141,7 @@ describe("Request", function() {
       "arrayBuffer",
       "blob",
       "json",
-	  "formData",
+      "formData",
       "text",
       "method",
       "url",
