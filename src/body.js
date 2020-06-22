@@ -7,7 +7,7 @@
 
 import { ReadableStream, TransformStream} from "@mattiasbuelens/web-streams-polyfill/ponyfill/es6";
 
-import Blob, { BUFFER } from './blob.js';
+// import Blob, { BUFFER } from './blob.js';
 import FetchError from './fetch-error.js';
 import Stream, { PassThrough } from "stream";
 import Busboy from "busboy";
@@ -29,8 +29,8 @@ export function getTypeOfBody(body) {
 		return "String";
 	} else if (isURLSearchParams(body)) {
 		return "URLSearchParams";
-	} else if (body instanceof Blob) {
-		return "Blob";
+	// } else if (body instanceof Blob) {
+	// 	return "Blob";
 	} else if (Buffer.isBuffer(body)) {
 		return "Buffer";
 	} else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
@@ -125,11 +125,11 @@ export function createReadableStream(instance) {
 					controller.enqueue(new Uint8Array(Buffer.from(body.toString())));
 					controller.close();
 					break;
-				case "Blob":
-					// body is blob
-					controller.enqueue(new Uint8Array(Buffer.from(body[BUFFER])));
-					controller.close();
-					break;
+				// case "Blob":
+				// 	// body is blob
+				// 	controller.enqueue(new Uint8Array(Buffer.from(body[BUFFER])));
+				// 	controller.close();
+				// 	break;
 				case "Buffer":
 					// body is Buffer
 					controller.enqueue(new Uint8Array(Buffer.from(body)));
@@ -227,18 +227,18 @@ Body.prototype = {
 	 *
 	 * @return Promise
 	 */
-	blob() {
-		let ct = this.headers && this.headers.get('content-type') || '';
-		return consumeBody.call(this).then(buf => Object.assign(
-			// Prevent copying
-			new Blob([], {
-				type: ct.toLowerCase()
-			}),
-			{
-				[BUFFER]: buf
-			}
-		));
-	},
+	// blob() {
+	// 	let ct = this.headers && this.headers.get('content-type') || '';
+	// 	return consumeBody.call(this).then(buf => Object.assign(
+	// 		// Prevent copying
+	// 		new Blob([], {
+	// 			type: ct.toLowerCase()
+	// 		}),
+	// 		{
+	// 			[BUFFER]: buf
+	// 		}
+	// 	));
+	// },
 
 	/**
 	 * Decode response as json
@@ -309,7 +309,7 @@ Object.defineProperties(Body.prototype, {
 	body: { enumerable: true },
 	bodyUsed: { enumerable: true },
 	arrayBuffer: { enumerable: true },
-	blob: { enumerable: true },
+	// blob: { enumerable: true },
 	json: { enumerable: true },
 	text: { enumerable: true }
 });
@@ -563,8 +563,8 @@ export function extractContentType(instance) {
 			return 'text/plain;charset=UTF-8';
 		case "URLSearchParams":
 			return 'application/x-www-form-urlencoded;charset=UTF-8';
-		case "Blob":
-			return body.type || null;
+		// case "Blob":
+		// 	return body.type || null;
 		case "FormData":
 			return `multipart/form-data;boundary=${body.getBoundary()}`;
 		default:
@@ -593,8 +593,8 @@ export function getTotalBytes(instance) {
 		case "URLSearchParams":
 		case "other":
 			return Buffer.byteLength(String(body));
-		case "Blob":
-			return body.size;
+		// case "Blob":
+		// 	return body.size;
 		case "Buffer":
 			return body.length;
 		case "ArrayBuffer":
@@ -659,10 +659,10 @@ export function writeToStream(dest, instance) {
 		// 	dest.write(body.toString());
 		// 	dest.end();
 		// 	break;
-		case "Blob":
-			dest.write(body[BUFFER]);
-			dest.end();
-			break;
+		// case "Blob":
+		// 	dest.write(body[BUFFER]);
+		// 	dest.end();
+		// 	break;
 		case "Buffer":
 			dest.write(body);
 			dest.end();
